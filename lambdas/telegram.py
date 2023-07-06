@@ -5,7 +5,6 @@ import futbol
 
 
 def lambda_handler(event, context):
-    telegram_msg = "Hello worlds from aws lambda!"
     telegram_token = os.environ['TELEGRAM_TOKEN']
 
     api_url = f"https://api.telegram.org/bot{telegram_token}/"
@@ -17,9 +16,10 @@ def lambda_handler(event, context):
     body = json.loads(body_str)
 
     # Get chat_id
-    chat_id = body.get('message', {}).get('chat', {}).get('id', None)
+    message = body.get('message', body.get('edited_message', {}))
+    chat_id = message.get('chat', {}).get('id', None)
     # Get team input
-    text = body.get('message', {}).get('text', 'Default')
+    text = message.get('text', 'Default')
     text = text.replace(r'\n', '\n')
 
     # Run socces algorithm
