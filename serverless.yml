@@ -24,6 +24,7 @@ provider:
   name: aws
   runtime: python3.9
   profile: serverless.account
+  versionFunctions: false
 
 # you can overwrite defaults here
 #  stage: dev
@@ -58,10 +59,10 @@ provider:
 #    - '!exclude-me-dir/**'
 #    - include-me.py
 #    - include-me-dir/**
-
 functions:
+
   hello:
-    handler: lambdas/hello.hello
+    handler: hello_world.lambda_handler
     events:
       - http:
           path: hello
@@ -71,19 +72,21 @@ functions:
   telegram:
     handler: telegram.lambda_handler
     package:
-      artifact: lambdas/telegram.zip
+      artifact: telegram/lambda.zip
     events:
       - http:
           path: telegram
           method: post
           cors: true
 
-  getUser:
-    handler: lambdas/user.get_user
+  web:
+    handler: web.lambda_handler
+    package:
+      artifact: web/lambda.zip
     events:
       - http:
-          path: get-user/{id}
-          method: get
+          path: web
+          method: post
           cors: true
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
