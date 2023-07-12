@@ -88,6 +88,16 @@ functions:
           path: web
           method: post
           cors: true
+
+  mail:
+    handler: mail.lambda_handler
+    package:
+      artifact: mail/lambda.zip
+    events:
+      - http:
+          path: mail
+          method: post
+          cors: true
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
