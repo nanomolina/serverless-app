@@ -8,47 +8,47 @@ def lambda_handler(event, context):
     SMTP_USERNAME = os.environ['SMTP_USERNAME']
     SMTP_PASS = os.environ['SMTP_PASS']
 
-    # Get body
-    body_str = event.get('body', '')
+    # Extract the request body from the event
+    body_str = event['body']
     body_str = body_str.replace('\\n', r'\\n')
     body = json.loads(body_str)
 
-    # Email details
-    sender_email = body.get('email', 'email@default.com')
+    # Access the parsed form data
+    name = body.get('name', 'No name')
+    sender_email = body.get('email', 'No mail')
     receiver_email = SMTP_USERNAME
-    name = body.get('name', 'name')
-    subject = body.get('subject', 'Test Email')
-    message = body.get('message', '')
-    try:
-        # Create a MIMEText object
-        header = f'This is a message from {name}\n'
-        message = header + message
-        email_body = MIMEText(message)
+    subject = body.get('subject', 'Default subject')
+    message = body.get('message', 'Default message')
 
-        # Set email details
-        email_body['Subject'] = subject
-        email_body['From'] = sender_email
-        email_body['To'] = receiver_email
+    # Create a MIMEText object
+    header = f'Name: {name}\n'
+    header += f'Email: {sender_email}\n\n'
+    message = header + message
+    email_body = MIMEText(message)
 
-        # SMTP server configuration
-        smtp_server = 'smtp.example.com'
-        smtp_port = 587
+    # Set email details
+    email_body['Subject'] = subject
+    email_body['From'] = sender_email
+    email_body['To'] = receiver_email
 
-        # Create an SMTP connection
-        smtp_conn = smtplib.SMTP(smtp_server, smtp_port)
-        smtp_conn.starttls()
-        smtp_conn.login(SMTP_USERNAME, SMTP_PASS)
+    # SMTP server configuration
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 587
 
-        # Send the email
-        smtp_conn.sendmail(sender_email, receiver_email, email_body.as_string())
+    # Create an SMTP connection
+    smtp_conn = smtplib.SMTP(smtp_server, smtp_port)
+    smtp_conn.starttls()
+    smtp_conn.login(SMTP_USERNAME, SMTP_PASS)
 
-        # Close the SMTP connection
-        smtp_conn.quit()
-    except Exception:
-        response = 'Try again'
+    # Send the email
+    smtp_conn.sendmail(sender_email, receiver_email, email_body.as_string())
+
+    # Close the SMTP connection
+    smtp_conn.quit()
+
     return {
         'statusCode': 200,
-        'body': json.dumps(response),
+        'body': json.dumps({'status': 'OK'}),
         'headers': {
             'Access-Control-Allow-Headers': 'Content-Type',
             'Access-Control-Allow-Origin': '*',
